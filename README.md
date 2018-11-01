@@ -1,57 +1,23 @@
-# Project Name
+# Microsoft Academic Graph PySpark Samples
 
-(short, 1-3 sentenced, description of the project)
-
-## Features
-
-This project framework provides the following features:
-
-* Feature 1
-* Feature 2
-* ...
+PySpark examples to analyze sample Microsoft Academic Graph Data on Azure storage.
 
 ## Getting Started
 
 ### Prerequisites
 
-(ideally very short, if any)
-
-- OS
-- Library version
-- ...
-
-### Installation
-
-(ideally very short)
-
-- npm install [package name]
-- mvn install
-- ...
+Before running these examples, you need to have following setups:
+- Azure HDInsight cluster with Spark
+- Access to Microsoft Academic Graph Data
 
 ### Quickstart
-(Add steps to get up and running quickly)
 
-1. git clone [repository clone url]
-2. cd [respository name]
-3. ...
+1. git clone https://github.com/Azure-Samples/microsoft-academic-graph-pyspark-samples.git
+2. cd microsoft-academic-graph-pyspark-samples/src
+3. python <path-to-one-source-file>
 
-
-## Demo
-
-A demo app is included to show how to use the project.
-
-To run the demo, follow these steps:
-
-(Add steps to start up the demo)
-
-1.
-2.
-3.
 
 ## Resources
 
-(Any additional resources or related projects)
+- https://docs.microsoft.com/en-us/academic-services/graph/
 
-- Link to supporting information
-- Link to similar sample
-- ...
