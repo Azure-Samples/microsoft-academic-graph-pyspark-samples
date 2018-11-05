@@ -14,7 +14,7 @@ Before running these examples, you need to have following setups:
 
 1. git clone https://github.com/Azure-Samples/microsoft-academic-graph-pyspark-samples.git
 2. cd microsoft-academic-graph-pyspark-samples/src
-3. python <path-to-one-source-file>
+3. python path-to-one-source-file
 
 
 ## Resources
