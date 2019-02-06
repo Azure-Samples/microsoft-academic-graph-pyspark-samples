@@ -2,31 +2,13 @@ from __future__ import print_function
 from pyspark.sql import SparkSession, SQLContext
 from pyspark.sql.types import *
 
+from CreatePySparkFunctions import *
+
 # Replace containerName and accountName
 containerName = "myContainerName"
 accountName = "myAccountName"
 
 outputDir = "/output/user01/pyspark"
-
-def FieldsOfStudy(baseDir):
-    _fieldsOfStudy = sqlContext.read.format('csv') \
-        .option("delimiter", "\t") \
-        .options(header='false', inferSchema='false') \
-        .load(baseDir + 'FieldsOfStudy.txt')
-
-    headers = ['FieldOfStudyId', 'Rank', 'NormalizedName', 'DisplayName', \
-               'MainType', 'Level', 'PaperCount', 'CitationCount', 'CreatedDate']
-    _fieldsOfStudy = _fieldsOfStudy.toDF(*headers)
-    return _fieldsOfStudy
-
-def PaperFieldsOfStudy(baseDir):
-    _paperFiledsOfStudy = sqlContext.read.format('csv') \
-        .option("delimiter", "\t") \
-        .options(header='false', inferSchema='false') \
-        .load(baseDir + 'PaperFieldsOfStudy.txt')
-
-    headers = ['PaperId', 'FieldOfStudyId', 'Similarity']
-    return _paperFiledsOfStudy.toDF(*headers)
 
 if __name__ == "__main__":
 
@@ -38,10 +20,10 @@ if __name__ == "__main__":
     sqlContext = SQLContext(spark)
 
     # Load FieldsOfStudy data
-    fieldOfStudy = FieldsOfStudy('wasbs://%s@%s.blob.core.windows.net/mag/' % (containerName, accountName))
+    fieldOfStudy = getDataFrameForFieldsOfStudy(sqlContext, containerName, accountName)
 
     # Load PaperFieldsOfStudy data
-    paperFieldsOfStudy = PaperFieldsOfStudy('wasbs://%s@%s.blob.core.windows.net/mag/' % (containerName, accountName))
+    paperFieldsOfStudy = getDataFrameForPaperFieldsOfStudy(sqlContext, containerName, accountName)
 
     # Get all paper details for the input organization.
     orgPapers = sqlContext.read.format('csv') \

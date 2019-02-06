@@ -2,6 +2,8 @@ from __future__ import print_function
 from pyspark.sql import SparkSession, SQLContext
 from pyspark.sql.types import *
 
+from CreatePySparkFunctions import *
+
 # Replace containerName and accountName
 containerName = "myContainerName"
 accountName = "myAccountName"
@@ -18,16 +20,7 @@ if __name__ == "__main__":
     sqlContext = SQLContext(spark)
 
     # Load Affiliations data
-    df = sqlContext.read.format('csv') \
-        .option("delimiter", "\t") \
-        .options(header='false', inferSchema='false') \
-        .load('wasbs://%s@%s.blob.core.windows.net/mag/Affiliations.txt' % (containerName, accountName))
-
-    # Insert headers
-    headers = ['AffiliationId', 'Rank', 'NormalizedName', \
-               'DisplayName', 'GridId', 'OfficialPage', 'WikiPage', \
-               'PaperCount', 'CitationCount', 'CreatedDate']
-    df = df.toDF(*headers)
+    df = getDataFrameForAffiliations(sqlContext, containerName, accountName)
 
     # Optional: peek the result
     df.show()

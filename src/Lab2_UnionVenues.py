@@ -2,6 +2,8 @@ from __future__ import print_function
 from pyspark.sql import SparkSession, SQLContext
 from pyspark.sql.types import *
 
+from CreatePySparkFunctions import *
+
 # Replace containerName and accountName
 containerName = "myContainerName"
 accountName = "myAccountName"
@@ -18,31 +20,12 @@ if __name__ == "__main__":
     sqlContext = SQLContext(spark)
 
     #Load ConferenceSeries data
-    conferences = sqlContext.read.format('csv') \
-        .option("delimiter", "\t") \
-        .options(header='false', inferSchema='false') \
-        .load('wasbs://%s@%s.blob.core.windows.net/mag/ConferenceSeries.txt' % (containerName, accountName))
-
-    # Insert headers
-    conferenceHeaders = ['ConferenceSeriesId', 'Rank', 'NormalizedName', \
-                         'DisplayName', 'PaperCount', 'CitationCount', 'CreatedDate']
-    conferences = conferences.toDF(*conferenceHeaders)
-
+    conferences = getDataFrameForConferenceSeries(sqlContext, containerName, accountName)
     # Optional: peek result
     conferences.show()
 
     #Load Journals data
-    journals = sqlContext.read.format('csv') \
-        .option("delimiter", "\t") \
-        .options(header='false', inferSchema='false') \
-        .load('wasbs://%s@%s.blob.core.windows.net/mag/Journals.txt' % (containerName, accountName))
-
-    # Insert headers
-    journalHeaders = ['JournalId', 'Rank', 'NormalizedName', \
-                      'DisplayName', 'Issn', 'Publisher', 'Webpage', \
-                      'PaperCount', 'CitationCount', 'CreatedDate']
-    journals = journals.toDF(*journalHeaders)
-
+    journals = getDataFrameForJournals(sqlContext, containerName, accountName)
     # Optional: peek result
     journals.show()
 
