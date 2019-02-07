@@ -3,6 +3,8 @@ from pyspark.sql import SparkSession, SQLContext
 from pyspark.sql.functions import concat, lit, log, when
 from pyspark.sql.types import *
 
+from CreatePySparkFunctions import *
+
 # Replace containerName and accountName
 containerName = "myContainerName"
 accountName = "myAccountName"
@@ -19,15 +21,7 @@ if __name__ == "__main__":
     sqlContext = SQLContext(spark)
 
     #Load Authors data
-    authors = sqlContext.read.format('csv') \
-        .option("delimiter", "\t") \
-        .options(header='false', inferSchema='false') \
-        .load('wasbs://%s@%s.blob.core.windows.net/mag/Authors.txt' % (containerName, accountName))
-
-    # Insert headers
-    authorHeaders = ['AuthorId', 'Rank', 'NormalizedName', 'DisplayName', \
-                     'LastKnownAffiliationId', 'PaperCount', 'CitationCount', 'CreatedDate']
-    authors = authors.toDF(*authorHeaders)
+    authors = getDataFrameForAuthors(sqlContext, containerName, accountName)
 
     #Load PaperAuthorAffiliationRelationship data
     paperAuthorAffiliation = sqlContext.read.format('csv') \
@@ -49,17 +43,7 @@ if __name__ == "__main__":
     orgAuthors.write.csv('%s/Author.csv' % outputDir, mode='overwrite', header='true')
 
     #Load Papers data
-    papers = sqlContext.read.format('csv') \
-        .option("delimiter", "\t") \
-        .options(header='false', inferSchema='false') \
-        .load('wasbs://%s@%s.blob.core.windows.net/mag/Papers.txt' % (containerName, accountName))
-
-    # Insert headers
-    paperHeaders = ['PaperId', 'Rank', 'Doi', 'DocType', 'PaperTitle', 'OriginalTitle', \
-                    'BookTitle', 'Year', 'Date', 'Publisher', 'JournalId', 'ConferenceSeriesId', \
-                    'ConferenceInstanceId', 'Volume', 'Issue', 'FirstPage', 'LastPage', \
-                    'ReferenceCount', 'CitationCount', 'EstimatedCitation', 'CreatedDate']
-    papers = papers.toDF(*paperHeaders)
+    papers = getDataFrameForPapers(sqlContext, containerName, accountName)
 
     Paper = papers.withColumn('Prefix', lit('https://academic.microsoft.com/#/detail/'))
 

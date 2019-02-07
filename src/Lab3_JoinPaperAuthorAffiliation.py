@@ -2,6 +2,8 @@ from __future__ import print_function
 from pyspark.sql import SparkSession, SQLContext
 from pyspark.sql.types import *
 
+from CreatePySparkFunctions import *
+
 # Replace containerName and accountName
 containerName = "myContainerName"
 accountName = "myAccountName"
@@ -24,15 +26,7 @@ if __name__ == "__main__":
         .load('%s/Affiliation.csv' % outputDir)
 
     # Load PaperAuthorAffiliations data
-    paperAuthorAffiliations = sqlContext.read.format('csv') \
-        .option("delimiter", "\t") \
-        .options(header='false', inferSchema='false') \
-        .load('wasbs://%s@%s.blob.core.windows.net/mag/PaperAuthorAffiliations.txt' % (containerName, accountName))
-
-    # Insert headers
-    paperAuthorAffiliationHeaders = ['PaperId', 'AuthorId', 'AffiliationId', 'AuthorSequenceNumber', 'OriginalAffiliation']
-    paperAuthorAffiliations = paperAuthorAffiliations.toDF(*paperAuthorAffiliationHeaders)
-
+    paperAuthorAffiliations = getDataFrameForPaperAuthorAffiliations(sqlContext, containerName, accountName)
     # Optional: peek result
     paperAuthorAffiliations.show()
 
