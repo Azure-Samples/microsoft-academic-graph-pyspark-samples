@@ -1,41 +1,17 @@
-from __future__ import print_function
-from pyspark.sql import SparkSession, SQLContext
-from pyspark.sql.types import *
+# Load Affiliations data
+df = getAffiliationsDataFrame(MagDir)
 
-from CreatePySparkFunctions import *
+# Optional: peek the result
+df.show()
 
-# Replace containerName and accountName
-containerName = "myContainerName"
-accountName = "myAccountName"
+# Extract the AffiliationId for Microsoft
+microsoft = df.where(df.NormalizedName == 'microsoft').select(df.AffiliationId, df.DisplayName)
 
-outputDir = "/output/user01/pyspark"
+# Optional: peek the result
+microsoft.show()
 
-if __name__ == "__main__":
+# Optional: Count number of rows in result
+print("Number of rows in the dataframe: {}".format(microsoft.count()))
 
-    # Start Spark context
-    spark = SparkSession \
-        .builder \
-        .appName("Microsoft academic graph spark Labs") \
-        .getOrCreate()
-    sqlContext = SQLContext(spark)
-
-    # Load Affiliations data
-    df = getDataFrameForAffiliations(sqlContext, containerName, accountName)
-
-    # Optional: peek the result
-    df.show()
-
-    # Extract the AffiliationId for Microsoft
-    microsoft = df.where(df.NormalizedName == 'microsoft').select(df.AffiliationId, df.DisplayName)
-
-    # Optional: peek the result
-    microsoft.show()
-
-    # Optional: Count number of rows in result
-    print("Number of rows in the dataframe: {}".format(microsoft.count()))
-
-    # Output result
-    microsoft.write.csv('%s/Affiliation.csv' % outputDir, mode='overwrite', header='true')
-
-    # Stop Spark context
-    spark.stop()
+# Output result
+microsoft.coalesce(1).write.mode('overwrite').format('csv').option('header','true').save('%s/Affiliation.csv' % OutputDir)
