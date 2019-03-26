@@ -1,12 +1,12 @@
 #Load ConferenceSeries data
 conferences = getConferenceSeriesDataFrame(MagDir)
 # Optional: peek result
-conferences.show()
+conferences.show(10)
 
 #Load Journals data
 journals = getJournalsDataFrame(MagDir)
 # Optional: peek result
-journals.show()
+journals.show(10)
 
 conferences = conferences \
     .select(conferences.ConferenceSeriesId, conferences.DisplayName, conferences.NormalizedName) \
@@ -19,10 +19,10 @@ journals = journals \
 venue = conferences.union(journals)
 
 # Optional: peek result
-venue.show()
+venue.show(10)
 
 # Optional: Count number of rows in result
 print('Number of rows in venue: {}'.format(venue.count()))
 
 # Output result
-venue.coalesce(1).write.mode('overwrite').format('csv').option('header','true').save('%s/Venue.csv' % OutputDir)
+venue.write.mode('overwrite').format('csv').option('header','true').save('%s/Venue.csv' % OutputDir)
