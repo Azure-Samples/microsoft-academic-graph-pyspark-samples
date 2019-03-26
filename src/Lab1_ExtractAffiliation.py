@@ -1,11 +1,10 @@
 # Load Affiliations data
-df = getAffiliationsDataFrame(MagDir)
-
+affiliations = getAffiliationsDataFrame(MagDir)
 # Optional: peek the result
-df.show()
+affiliations.show(10)
 
 # Extract the AffiliationId for Microsoft
-microsoft = df.where(df.NormalizedName == 'microsoft').select(df.AffiliationId, df.DisplayName)
+microsoft = affiliations.where(affiliations.NormalizedName == 'microsoft').select(affiliations.AffiliationId, affiliations.DisplayName)
 
 # Optional: peek the result
 microsoft.show()
@@ -14,4 +13,4 @@ microsoft.show()
 print("Number of rows in the dataframe: {}".format(microsoft.count()))
 
 # Output result
-microsoft.coalesce(1).write.mode('overwrite').format('csv').option('header','true').save('%s/Affiliation.csv' % OutputDir)
+microsoft.write.mode('overwrite').format('csv').option('header','true').save('%s/Affiliation.csv' % OutputDir)
