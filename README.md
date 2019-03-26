@@ -1,6 +1,6 @@
 # Microsoft Academic Graph PySpark Samples
 
-PySpark examples running in Azure Databricks to analyze sample Microsoft Academic Graph Data on Azure storage.
+PySpark examples running on Azure Databricks to analyze sample Microsoft Academic Graph Data on Azure storage.
 
 ## Prerequisites
 
