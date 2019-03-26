@@ -26,7 +26,6 @@ Before running these examples, you need to complete the following setups:
 
 1. git clone https://github.com/Azure-Samples/microsoft-academic-graph-pyspark-samples.git
 1. [Create a notebook](https://docs.azuredatabricks.net/user-guide/notebooks/notebook-manage.html#create-a-notebook) and run `samples/CreatePySparkFunctions.py` in your MAG dataset.
-1. cd microsoft-academic-graph-pyspark-samples/src
 1. [Create a notebook](https://docs.azuredatabricks.net/user-guide/notebooks/notebook-manage.html#create-a-notebook) and run `src/Lab0_Setup.py` before you run other scripts.
 
 ## Resources
