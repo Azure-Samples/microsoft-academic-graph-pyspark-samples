@@ -1,20 +1,18 @@
 from pyspark.sql.functions import concat, lit, log, when
 
-#Load Authors data
-authors = getAuthorsDataFrame(MagDir)
-
 #Load PaperAuthorAffiliationRelationship data from previous output
-header = ['PaperId', 'AuthorId', 'AffiliationId', 'AuthorSequenceNumber']
-paperAuthorAffiliation = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'PaperAuthorAffiliationRelationship.csv')).toDF(*header)
-
+paperAuthorAffiliation = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'PaperAuthorAffiliationRelationship.csv'))
 paperAuthorAffiliation.show(10)
 
 orgAuthorIds = paperAuthorAffiliation.select(paperAuthorAffiliation.AuthorId).distinct()
 
+#Load Authors data
+authors = getAuthorsDataFrame(MagDir)
+
 # Get all author details
-orgAuthors = authors.join(orgAuthorIds, authors.AuthorId == orgAuthorIds.AuthorId, 'inner') \
-    .select(orgAuthorIds.AuthorId, authors.DisplayName) \
-    .selectExpr('AuthorId as AuthorId', 'DisplayName as AuthorName')
+orgAuthors = authors \
+    .join(orgAuthorIds, authors.AuthorId == orgAuthorIds.AuthorId, 'inner') \
+    .select(orgAuthorIds.AuthorId, authors.DisplayName.alias('AuthorName'))
 
 # Optional: peek result
 orgAuthors.show(10)
@@ -30,7 +28,8 @@ papers = papers.withColumn('Prefix', lit('https://academic.microsoft.com/#/detai
 # Get all paper details
 orgPaperIds = paperAuthorAffiliation.select(paperAuthorAffiliation.PaperId).distinct()
 
-orgPapers = papers.join(orgPaperIds, papers.PaperId == orgPaperIds.PaperId) \
+orgPapers = papers \
+    .join(orgPaperIds, papers.PaperId == orgPaperIds.PaperId) \
     .where(papers.Year >= 1991) \
     .select(papers.PaperId, papers.PaperTitle.alias('Title'), papers.EstimatedCitation.alias('CitationCount'), \
             papers.Date, when(papers.DocType.isNull(), 'Not available').otherwise(papers.DocType).alias('PublicationType'), \
