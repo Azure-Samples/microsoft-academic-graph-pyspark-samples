@@ -1,10 +1,8 @@
 # Get all paper details for the input organization from previous output
-header = ['PaperId', 'Title', 'CitationCount', 'Date', 'PublicationType', 'LogProb', 'Url', 'VId', 'Year']
-orgPapers = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Paper.csv')).toDF(*header)
+orgPapers = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Paper.csv'))
 
 # Get all Paper-Author-Affiliation relationships for the input organization from previous output
-header = ['PaperId', 'AuthorId', 'AffiliationId', 'AuthorSequenceNumber']
-orgPaperAuthorAffiliation = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'PaperAuthorAffiliationRelationship.csv')).toDF(*header)
+orgPaperAuthorAffiliation = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'PaperAuthorAffiliationRelationship.csv'))
 
 # Get all paper-author-affiliation relationships
 paperAuthorAffiliations = getPaperAuthorAffiliationsDataFrame(MagDir)
