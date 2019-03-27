@@ -1,6 +1,5 @@
 # Load Affiliation data for the input organization from previous output
-header = ['AffiliationId', 'DisplayName']
-affiliations = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Affiliation.csv')).toDF(*header)
+affiliations = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Affiliation.csv'))
 
 # Load PaperAuthorAffiliations data
 paperAuthorAffiliations = getPaperAuthorAffiliationsDataFrame(MagDir)
