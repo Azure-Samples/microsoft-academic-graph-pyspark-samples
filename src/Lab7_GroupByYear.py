@@ -1,8 +1,7 @@
 from pyspark.sql.functions import count, sum
 
 # Get all paper details for the input organization from previous output
-header = ['PaperId', 'Title', 'CitationCount', 'Date', 'PublicationType', 'LogProb', 'Url', 'VId', 'Year']
-orgPapers = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Paper.csv')).toDF(*header)
+orgPapers = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Paper.csv'))
 
 # Get paper count and citation sum for each year
 orgPaperGroupByYear = orgPapers \
