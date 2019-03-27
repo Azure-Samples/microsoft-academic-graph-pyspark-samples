@@ -26,7 +26,7 @@ Before running these examples, you need to complete the following setups:
 
 1. git clone https://github.com/Azure-Samples/microsoft-academic-graph-pyspark-samples.git
 
-1. Follow instructions in [PySpark analytics samples for Microsoft Academic Graph](https://docs.microsoft.com/academic-services/graph/samples-azure-databricks) to run the PySpark scripts in this repository.
+1. Follow instructions in [PySpark analytics samples for Microsoft Academic Graph](https://docs.microsoft.com/academic-services/graph/samples-azure-databricks) to run PySpark scripts in this repository.
 
 ## Resources
 
