@@ -1,11 +1,11 @@
 # Get paper details for the input organization from previous output
-orgPapers = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Paper.csv'))
+orgPapers = asu.load('Paper.csv')
 
 # Load FieldsOfStudy data
-fieldOfStudy = getFieldsOfStudyDataFrame(MagDir)
+fieldOfStudy = mag.dataframe('FieldsOfStudy')
 
 # Load PaperFieldsOfStudy data
-paperFieldsOfStudy = getPaperFieldsOfStudyDataFrame(MagDir)
+paperFieldsOfStudy = mag.dataframe('PaperFieldsOfStudy')
 
 # Get Paper-Field-of-Study relationships for the input organization
 orgPaperFieldOfStudy = paperFieldsOfStudy \
@@ -16,7 +16,7 @@ orgPaperFieldOfStudy = paperFieldsOfStudy \
 orgPaperFieldOfStudy.show(10)
 
 # Output result
-orgPaperFieldOfStudy.write.mode('overwrite').format('csv').option('header','true').save('%s/PaperFieldOfStudyRelationship.csv' % OutputDir)
+asu.save(orgPaperFieldOfStudy, 'PaperFieldOfStudyRelationship.csv')
 
 # Get all field-of-study Ids for the input organization
 orgFieldOfStudyIds = orgPaperFieldOfStudy.select(orgPaperFieldOfStudy.FieldOfStudyId).distinct()
@@ -30,4 +30,4 @@ orgFiledOfStudy = fieldOfStudy \
 orgFiledOfStudy.show(10)
 
 # Output result
-orgFiledOfStudy.write.mode('overwrite').format('csv').option('header','true').save('%s/FieldOfStudy.csv' % OutputDir)
+asu.save(orgFiledOfStudy, 'FieldOfStudy.csv')
