@@ -22,7 +22,7 @@ orgAllPaperAuthorAffiliations = paperAuthorAffiliations \
 # Get partner Paper-Author-Affiliation relationships by excluding those relationships of the input organization
 partnerPaperAuthorAffiliation = orgAllPaperAuthorAffiliations.subtract(orgPaperAuthorAffiliation)
 partnerPaperAuthorAffiliation.show(10)
-partnerPaperAuthorAffiliation.write.mode('overwrite').format('csv').option('header','true').save('%s/PartnerPaperAuthorAffiliationRelationship.csv' % OutputDir)
+asu.save(partnerPaperAuthorAffiliation, 'PartnerPaperAuthorAffiliationRelationship.csv')
 
 # Get all partner affiliation Ids
 partnerAffiliationIds = partnerPaperAuthorAffiliation \
