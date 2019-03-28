@@ -1,8 +1,8 @@
 # Load Affiliation data for the input organization from previous output
-affiliations = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Affiliation.csv'))
+affiliations = asu.load('Affiliation.csv')
 
 # Load PaperAuthorAffiliations data
-paperAuthorAffiliations = getPaperAuthorAffiliationsDataFrame(MagDir)
+paperAuthorAffiliations = mag.dataframe('PaperAuthorAffiliations')
 # Optional: peek result
 paperAuthorAffiliations.show(10)
 
@@ -19,4 +19,4 @@ orgPaperAuthorAffiliation.show(10)
 print('Number of rows in PaperAuthorAffiliation: {}'.format(orgPaperAuthorAffiliation.count()))
 
 # Output result
-orgPaperAuthorAffiliation.write.mode('overwrite').format('csv').option('header','true').save('%s/PaperAuthorAffiliationRelationship.csv' % OutputDir)
+asu.save(orgPaperAuthorAffiliation, 'PaperAuthorAffiliationRelationship.csv')
