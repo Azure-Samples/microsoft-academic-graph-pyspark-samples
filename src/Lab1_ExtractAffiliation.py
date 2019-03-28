@@ -1,5 +1,6 @@
 # Load Affiliations data
-affiliations = getAffiliationsDataFrame(MagDir)
+affiliations = MAG.dataframe('Affiliations')
+
 # Optional: peek the result
 affiliations.show(10)
 
@@ -13,4 +14,4 @@ microsoft.show()
 print("Number of rows in the dataframe: {}".format(microsoft.count()))
 
 # Output result
-microsoft.write.mode('overwrite').format('csv').option('header','true').save('%s/Affiliation.csv' % OutputDir)
+ASU.save(microsoft, 'Affiliation.csv')
