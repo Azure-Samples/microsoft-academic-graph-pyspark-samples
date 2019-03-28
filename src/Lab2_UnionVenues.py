@@ -1,10 +1,10 @@
 #Load ConferenceSeries data
-conferences = getConferenceSeriesDataFrame(MagDir)
+conferences = mag.dataframe('ConferenceSeries')
 # Optional: peek result
 conferences.show(10)
 
 #Load Journals data
-journals = getJournalsDataFrame(MagDir)
+journals = mag.dataframe('Journals')
 # Optional: peek result
 journals.show(10)
 
@@ -25,4 +25,4 @@ venue.show(10)
 print('Number of rows in venue: {}'.format(venue.count()))
 
 # Output result
-venue.write.mode('overwrite').format('csv').option('header','true').save('%s/Venue.csv' % OutputDir)
+asu.save(venue, 'Venue.csv')
