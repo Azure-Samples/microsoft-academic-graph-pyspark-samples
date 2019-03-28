@@ -1,7 +1,7 @@
 from pyspark.sql.functions import count, sum
 
 # Get all paper details for the input organization from previous output
-orgPapers = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Paper.csv'))
+orgPapers = asu.load('Paper.csv')
 
 # Get paper count and citation sum for each year
 orgPaperGroupByYear = orgPapers \
@@ -12,4 +12,4 @@ orgPaperGroupByYear = orgPapers \
 orgPaperGroupByYear.show(10)
 
 # Output result
-orgPaperGroupByYear.coalesce(1).write.mode('overwrite').format('csv').option('header','true').save('%s/PaperGroupByYear.csv' % OutputDir)
+asu.save(orgPaperGroupByYear, 'PaperGroupByYear.csv')
