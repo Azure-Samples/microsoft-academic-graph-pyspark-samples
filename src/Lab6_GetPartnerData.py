@@ -1,17 +1,17 @@
 # Get all paper details for the input organization from previous output
-orgPapers = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'Paper.csv'))
+orgPapers = asu.load('Paper.csv')
 
 # Get all Paper-Author-Affiliation relationships for the input organization from previous output
-orgPaperAuthorAffiliation = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'PaperAuthorAffiliationRelationship.csv'))
+orgPaperAuthorAffiliation = asu.load('PaperAuthorAffiliationRelationship.csv')
 
 # Get all paper-author-affiliation relationships
-paperAuthorAffiliations = getPaperAuthorAffiliationsDataFrame(MagDir)
+paperAuthorAffiliations = mag.dataframe('PaperAuthorAffiliations')
 
 # Get all affiliation details
-affiliations = getAffiliationsDataFrame(MagDir)
+affiliations = mag.dataframe('Affiliations')
 
 # Get all author details
-authors = getAuthorsDataFrame(MagDir)
+authors = mag.dataframe('Authors')
 
 # Get all Paper-Author-Affiliation relationships for papers published by the input organization
 orgAllPaperAuthorAffiliations = paperAuthorAffiliations \
@@ -35,11 +35,11 @@ partnerAffiliations = affiliations \
     .join(partnerAffiliationIds, affiliations.AffiliationId == partnerAffiliationIds.AffiliationId, 'inner') \
     .select(partnerAffiliationIds.AffiliationId, affiliations.DisplayName.alias('AffiliationName'))
 partnerAffiliations.show(10)
-partnerAffiliations.write.mode('overwrite').format('csv').option('header','true').save('%s/PartnerAffiliation.csv' % OutputDir)
+asu.save(partnerAffiliations, 'PartnerAffiliation.csv')
 
 # Get all partner author Ids
 partnerAuthorIds = partnerPaperAuthorAffiliation.select(partnerPaperAuthorAffiliation.AuthorId).distinct()
 partnerAuthors = authors.join(partnerAuthorIds, partnerAuthorIds.AuthorId == authors.AuthorId) \
                         .select(partnerAuthorIds.AuthorId, authors.DisplayName.alias('AuthorName'))
 partnerAuthors.show(10)
-partnerAuthors.write.mode('overwrite').format('csv').option('header','true').save('%s/PartnerAuthor.csv' % OutputDir)
+asu.save(partnerAuthors, 'PartnerAuthor.csv')
