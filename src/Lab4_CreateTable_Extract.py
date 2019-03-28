@@ -21,7 +21,7 @@ orgAuthors.show(10)
 asu.save(orgAuthors, 'Author.csv')
 
 #Load Papers data
-papers = getPapersDataFrame(MagDir)
+papers = mag.dataframe('Papers')
 
 papers = papers.withColumn('Prefix', lit('https://academic.microsoft.com/#/detail/'))
 
