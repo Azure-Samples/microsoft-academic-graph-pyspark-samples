@@ -1,13 +1,13 @@
 from pyspark.sql.functions import concat, lit, log, when
 
 #Load PaperAuthorAffiliationRelationship data from previous output
-paperAuthorAffiliation = spark.read.format('csv').options(header='true', inferSchema='true').load('%s/%s' % (OutputDir, 'PaperAuthorAffiliationRelationship.csv'))
+paperAuthorAffiliation = asu.load('PaperAuthorAffiliationRelationship.csv')
 paperAuthorAffiliation.show(10)
 
 orgAuthorIds = paperAuthorAffiliation.select(paperAuthorAffiliation.AuthorId).distinct()
 
 #Load Authors data
-authors = getAuthorsDataFrame(MagDir)
+authors = mag.dataframe('Authors')
 
 # Get all author details
 orgAuthors = authors \
@@ -18,7 +18,7 @@ orgAuthors = authors \
 orgAuthors.show(10)
 
 # Output result
-orgAuthors.write.mode('overwrite').format('csv').option('header','true').save('%s/Author.csv' % OutputDir)
+asu.save(orgAuthors, 'Author.csv')
 
 #Load Papers data
 papers = getPapersDataFrame(MagDir)
@@ -44,4 +44,4 @@ orgPapers.show(10)
 print('Number of rows in orgPapers: {}'.format(orgPapers.count()))
 
 # Output result
-orgPapers.write.mode('overwrite').format('csv').option('header','true').save('%s/Paper.csv' % OutputDir)
+asu.save(orgPapers, 'Paper.csv')
