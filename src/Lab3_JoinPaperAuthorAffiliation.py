@@ -2,7 +2,7 @@
 affiliations = asu.load('Affiliation.csv')
 
 # Load PaperAuthorAffiliations data
-paperAuthorAffiliations = mag.dataframe('PaperAuthorAffiliations')
+paperAuthorAffiliations = mag.getDataframe('PaperAuthorAffiliations')
 # Optional: peek result
 paperAuthorAffiliations.show(10)
 
