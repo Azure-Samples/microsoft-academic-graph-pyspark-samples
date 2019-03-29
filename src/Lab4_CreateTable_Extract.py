@@ -7,7 +7,7 @@ paperAuthorAffiliation.show(10)
 orgAuthorIds = paperAuthorAffiliation.select(paperAuthorAffiliation.AuthorId).distinct()
 
 #Load Authors data
-authors = mag.dataframe('Authors')
+authors = mag.getDataframe('Authors')
 
 # Get all author details
 orgAuthors = authors \
@@ -21,7 +21,7 @@ orgAuthors.show(10)
 asu.save(orgAuthors, 'Author.csv')
 
 #Load Papers data
-papers = mag.dataframe('Papers')
+papers = mag.getDataframe('Papers')
 
 papers = papers.withColumn('Prefix', lit('https://academic.microsoft.com/#/detail/'))
 
