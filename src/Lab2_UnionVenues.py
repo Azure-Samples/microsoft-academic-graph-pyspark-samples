@@ -1,10 +1,10 @@
 #Load ConferenceSeries data
-conferences = mag.dataframe('ConferenceSeries')
+conferences = mag.getDataframe('ConferenceSeries')
 # Optional: peek result
 conferences.show(10)
 
 #Load Journals data
-journals = mag.dataframe('Journals')
+journals = mag.getDataframe('Journals')
 # Optional: peek result
 journals.show(10)
 
