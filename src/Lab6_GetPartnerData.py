@@ -5,13 +5,13 @@ orgPapers = asu.load('Paper.csv')
 orgPaperAuthorAffiliation = asu.load('PaperAuthorAffiliationRelationship.csv')
 
 # Get all paper-author-affiliation relationships
-paperAuthorAffiliations = mag.dataframe('PaperAuthorAffiliations')
+paperAuthorAffiliations = mag.getDataframe('PaperAuthorAffiliations')
 
 # Get all affiliation details
-affiliations = mag.dataframe('Affiliations')
+affiliations = mag.getDataframe('Affiliations')
 
 # Get all author details
-authors = mag.dataframe('Authors')
+authors = mag.getDataframe('Authors')
 
 # Get all Paper-Author-Affiliation relationships for papers published by the input organization
 orgAllPaperAuthorAffiliations = paperAuthorAffiliations \
