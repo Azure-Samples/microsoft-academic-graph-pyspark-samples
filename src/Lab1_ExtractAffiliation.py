@@ -1,5 +1,5 @@
 # Load Affiliations data
-affiliations = mag.dataframe('Affiliations')
+affiliations = mag.getDataframe('Affiliations')
 
 # Optional: peek the result
 affiliations.show(10)
