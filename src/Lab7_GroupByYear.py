@@ -12,4 +12,4 @@ orgPaperGroupByYear = orgPapers \
 orgPaperGroupByYear.show(10)
 
 # Output result
-asu.save(orgPaperGroupByYear, 'PaperGroupByYear.csv')
+asu.save(orgPaperGroupByYear, 'PaperGroupByYear.csv', coalesce=True)
