@@ -2,10 +2,10 @@
 orgPapers = asu.load('Paper.csv')
 
 # Load FieldsOfStudy data
-fieldOfStudy = mag.dataframe('FieldsOfStudy')
+fieldOfStudy = mag.getDataframe('FieldsOfStudy')
 
 # Load PaperFieldsOfStudy data
-paperFieldsOfStudy = mag.dataframe('PaperFieldsOfStudy')
+paperFieldsOfStudy = mag.getDataframe('PaperFieldsOfStudy')
 
 # Get Paper-Field-of-Study relationships for the input organization
 orgPaperFieldOfStudy = paperFieldsOfStudy \
