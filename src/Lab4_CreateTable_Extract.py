@@ -1,70 +1,47 @@
-from __future__ import print_function
-from pyspark.sql import SparkSession, SQLContext
 from pyspark.sql.functions import concat, lit, log, when
-from pyspark.sql.types import *
 
-from CreatePySparkFunctions import *
+#Load PaperAuthorAffiliationRelationship data from previous output
+paperAuthorAffiliation = asu.load('PaperAuthorAffiliationRelationship.csv')
+paperAuthorAffiliation.show(10)
 
-# Replace containerName and accountName
-containerName = "myContainerName"
-accountName = "myAccountName"
+orgAuthorIds = paperAuthorAffiliation.select(paperAuthorAffiliation.AuthorId).distinct()
 
-outputDir = "/output/user01/pyspark"
+#Load Authors data
+authors = mag.getDataframe('Authors')
 
-if __name__ == "__main__":
+# Get all author details
+orgAuthors = authors \
+    .join(orgAuthorIds, authors.AuthorId == orgAuthorIds.AuthorId, 'inner') \
+    .select(orgAuthorIds.AuthorId, authors.DisplayName.alias('AuthorName'))
 
-    # Start Spark context
-    spark = SparkSession \
-        .builder \
-        .appName("Microsoft academic graph spark Labs") \
-        .getOrCreate()
-    sqlContext = SQLContext(spark)
+# Optional: peek result
+orgAuthors.show(10)
 
-    #Load Authors data
-    authors = getDataFrameForAuthors(sqlContext, containerName, accountName)
+# Output result
+asu.save(orgAuthors, 'Author.csv')
 
-    #Load PaperAuthorAffiliationRelationship data
-    paperAuthorAffiliation = sqlContext.read.format('csv') \
-        .option("delimiter", ",") \
-        .options(header='true', inferSchema='true') \
-        .load('%s/PaperAuthorAffiliationRelationship.csv' % outputDir)
+#Load Papers data
+papers = mag.getDataframe('Papers')
 
-    orgAuthorIds = paperAuthorAffiliation.select(paperAuthorAffiliation.AuthorId).distinct()
+papers = papers.withColumn('Prefix', lit('https://academic.microsoft.com/#/detail/'))
 
-    # Get all author details.
-    orgAuthors = authors.join(orgAuthorIds, authors.AuthorId == orgAuthorIds.AuthorId, 'inner') \
-        .select(orgAuthorIds.AuthorId, authors.DisplayName) \
-        .selectExpr('AuthorId as AuthorId', 'DisplayName as AuthorName')
+# Get all paper details
+orgPaperIds = paperAuthorAffiliation.select(paperAuthorAffiliation.PaperId).distinct()
 
-    # Optional: peek result
-    orgAuthors.show()
+orgPapers = papers \
+    .join(orgPaperIds, papers.PaperId == orgPaperIds.PaperId) \
+    .where(papers.Year >= 1991) \
+    .select(papers.PaperId, papers.PaperTitle.alias('Title'), papers.EstimatedCitation.alias('CitationCount'), \
+            papers.Date, when(papers.DocType.isNull(), 'Not available').otherwise(papers.DocType).alias('PublicationType'), \
+            log(papers.Rank).alias('LogProb'), concat(papers.Prefix, papers.PaperId).alias('Url'), \
+            when(papers.ConferenceSeriesId.isNull(), papers.JournalId).otherwise(papers.ConferenceSeriesId).alias('VId'), \
+            papers.Year)
 
-    # Output result
-    orgAuthors.write.csv('%s/Author.csv' % outputDir, mode='overwrite', header='true')
+# Optional: peek result
+orgPapers.show(10)
 
-    #Load Papers data
-    papers = getDataFrameForPapers(sqlContext, containerName, accountName)
+# Optional: Count number of rows in result
+print('Number of rows in orgPapers: {}'.format(orgPapers.count()))
 
-    Paper = papers.withColumn('Prefix', lit('https://academic.microsoft.com/#/detail/'))
-
-    # Get all paper details.
-    orgPaperIds = paperAuthorAffiliation.select(paperAuthorAffiliation.PaperId).distinct()
-    orgPapers = Paper.join(orgPaperIds, Paper.PaperId == orgPaperIds.PaperId) \
-        .where(Paper.Year >= 1991) \
-        .select(Paper.PaperId, Paper.PaperTitle.alias('Title'), Paper.EstimatedCitation.alias('CitationCount'), \
-                Paper.Date, when(Paper.DocType.isNull(), 'Not available').otherwise(Paper.DocType).alias('PublicationType'), \
-                log(Paper.Rank).alias('LogProb'), concat(Paper.Prefix, Paper.PaperId).alias('Url'), \
-                when(Paper.ConferenceSeriesId.isNull(), Paper.JournalId).otherwise(Paper.ConferenceSeriesId).alias('VId'), \
-                Paper.Year)
-
-    # Optional: peek result
-    orgPapers.show()
-
-    # Optional: Count number of rows in result
-    print('Number of rows in orgPapers: {}'.format(orgPapers.count()))
-
-    # Output result
-    orgPapers.write.csv('%s/Paper.csv' % outputDir, mode='overwrite', header='true')
-
-    # Stop Spark context
-    spark.stop()
+# Output result
+asu.save(orgPapers, 'Paper.csv')

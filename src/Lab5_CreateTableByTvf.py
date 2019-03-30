@@ -1,58 +1,33 @@
-from __future__ import print_function
-from pyspark.sql import SparkSession, SQLContext
-from pyspark.sql.types import *
+# Get paper details for the input organization from previous output
+orgPapers = asu.load('Paper.csv')
 
-from CreatePySparkFunctions import *
+# Load FieldsOfStudy data
+fieldOfStudy = mag.getDataframe('FieldsOfStudy')
 
-# Replace containerName and accountName
-containerName = "myContainerName"
-accountName = "myAccountName"
+# Load PaperFieldsOfStudy data
+paperFieldsOfStudy = mag.getDataframe('PaperFieldsOfStudy')
 
-outputDir = "/output/user01/pyspark"
+# Get Paper-Field-of-Study relationships for the input organization
+orgPaperFieldOfStudy = paperFieldsOfStudy \
+    .join(orgPapers, paperFieldsOfStudy.PaperId == orgPapers.PaperId, 'inner') \
+    .select(orgPapers.PaperId, paperFieldsOfStudy.FieldOfStudyId)
 
-if __name__ == "__main__":
+# Optional: peek result
+orgPaperFieldOfStudy.show(10)
 
-    # Start Spark context
-    spark = SparkSession \
-        .builder \
-        .appName("Microsoft academic graph spark Labs") \
-        .getOrCreate()
-    sqlContext = SQLContext(spark)
+# Output result
+asu.save(orgPaperFieldOfStudy, 'PaperFieldOfStudyRelationship.csv')
 
-    # Load FieldsOfStudy data
-    fieldOfStudy = getDataFrameForFieldsOfStudy(sqlContext, containerName, accountName)
+# Get all field-of-study Ids for the input organization
+orgFieldOfStudyIds = orgPaperFieldOfStudy.select(orgPaperFieldOfStudy.FieldOfStudyId).distinct()
 
-    # Load PaperFieldsOfStudy data
-    paperFieldsOfStudy = getDataFrameForPaperFieldsOfStudy(sqlContext, containerName, accountName)
+# Get all field-of-study details for the input organization
+orgFiledOfStudy = fieldOfStudy \
+    .join(orgFieldOfStudyIds, fieldOfStudy.FieldOfStudyId == orgFieldOfStudyIds.FieldOfStudyId, 'inner') \
+    .select(orgFieldOfStudyIds.FieldOfStudyId, fieldOfStudy.Level.alias('FieldLevel'), fieldOfStudy.DisplayName.alias('FieldName'))
 
-    # Get all paper details for the input organization.
-    orgPapers = sqlContext.read.format('csv') \
-        .option("delimiter", ",") \
-        .options(header='true', inferSchema='true') \
-        .load('%s/Paper.csv' % outputDir) 
+# Optional: peek result
+orgFiledOfStudy.show(10)
 
-    # Get all Paper-Field-of-Study relationships for the input organization.
-    orgPaperFieldOfStudy = paperFieldsOfStudy.join(orgPapers, paperFieldsOfStudy.PaperId == orgPapers.PaperId, 'inner') \
-        .select(orgPapers.PaperId, paperFieldsOfStudy.FieldOfStudyId)
-
-    # Optional: peek result
-    orgPaperFieldOfStudy.show()
-
-    # Output result
-    orgPaperFieldOfStudy.write.csv('%s/PaperFieldOfStudyRelationship.csv' % outputDir, mode='overwrite', header='true')
-
-    # Get all field-of-study Ids for the input organization.
-    orgFieldOfStudyIds = orgPaperFieldOfStudy.select(orgPaperFieldOfStudy.FieldOfStudyId).distinct()
-
-    # Get all field-of-study details for the input organization
-    out_filedOfStudy = fieldOfStudy.join(orgFieldOfStudyIds, fieldOfStudy.FieldOfStudyId == orgFieldOfStudyIds.FieldOfStudyId, 'inner') \
-        .select(orgFieldOfStudyIds.FieldOfStudyId, fieldOfStudy.Level.alias('FieldLevel'), fieldOfStudy.DisplayName.alias('FieldName'))
-
-    # Optional: peek result
-    out_filedOfStudy.show()
-
-    # Output result
-    out_filedOfStudy.write.csv('%s/FieldOfStudy.csv' % outputDir, mode='overwrite', header='true')
-
-    # Stop Spark context
-    spark.stop()
+# Output result
+asu.save(orgFiledOfStudy, 'FieldOfStudy.csv')

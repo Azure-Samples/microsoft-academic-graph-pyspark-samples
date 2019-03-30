@@ -1,39 +1,15 @@
-from __future__ import print_function
-from pyspark.sql import SparkSession, SQLContext
 from pyspark.sql.functions import count, sum
-from pyspark.sql.types import *
 
-# Replace containerName and accountName
-containerName = "myContainerName"
-accountName = "myAccountName"
+# Get all paper details for the input organization from previous output
+orgPapers = asu.load('Paper.csv')
 
-outputDir = "/output/user01/pyspark"
+# Get paper count and citation sum for each year
+orgPaperGroupByYear = orgPapers \
+    .groupBy(orgPapers.Year) \
+    .agg(count(orgPapers.PaperId).alias('PaperCount'), sum(orgPapers.CitationCount).alias('CitationSum'))
 
-if __name__ == "__main__":
+# Optional: peek result
+orgPaperGroupByYear.show(10)
 
-    # Start Spark context
-    spark = SparkSession \
-        .builder \
-        .appName("Microsoft academic graph spark Labs") \
-        .getOrCreate()
-    sqlContext = SQLContext(spark)
-
-    # Get all paper details for the input organization.
-    orgPapers = sqlContext.read.format('csv') \
-        .option("delimiter", ",") \
-        .options(header='true', inferSchema='true') \
-        .load('%s/Paper.csv' % outputDir)
-
-    # Get paper count and citation sum for each year.
-    orgPaperGroupByYear = orgPapers \
-        .groupBy(orgPapers.Year) \
-        .agg(count(orgPapers.PaperId).alias('PaperCount'), sum(orgPapers.CitationCount).alias('CitationSum'))
-
-    # Optional: peek result
-    orgPaperGroupByYear.show()
-
-    # Output result
-    orgPaperGroupByYear.write.csv('%s/OrgPaperGroupByYear.csv' % outputDir, mode='overwrite', header='true')
-
-    # Stop Spark context
-    spark.stop()
+# Output result
+asu.save(orgPaperGroupByYear, 'PaperGroupByYear.csv', coalesce=True)
