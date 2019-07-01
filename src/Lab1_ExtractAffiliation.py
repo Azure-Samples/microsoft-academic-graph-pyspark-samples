@@ -5,7 +5,8 @@ affiliations = mag.getDataframe('Affiliations')
 affiliations.show(10)
 
 # Extract the AffiliationId for Microsoft
-microsoft = affiliations.where(affiliations.NormalizedName == 'microsoft').select(affiliations.AffiliationId, affiliations.DisplayName)
+microsoft = affiliations.where(affiliations.NormalizedName == 'microsoft').select(
+    affiliations.AffiliationId, affiliations.DisplayName)
 
 # Optional: peek the result
 microsoft.show()

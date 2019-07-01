@@ -19,7 +19,8 @@ orgPaperFieldOfStudy.show(10)
 asu.save(orgPaperFieldOfStudy, 'PaperFieldOfStudyRelationship.csv')
 
 # Get all field-of-study Ids for the input organization
-orgFieldOfStudyIds = orgPaperFieldOfStudy.select(orgPaperFieldOfStudy.FieldOfStudyId).distinct()
+orgFieldOfStudyIds = orgPaperFieldOfStudy.select(
+    orgPaperFieldOfStudy.FieldOfStudyId).distinct()
 
 # Get all field-of-study details for the input organization
 orgFiledOfStudy = fieldOfStudy \

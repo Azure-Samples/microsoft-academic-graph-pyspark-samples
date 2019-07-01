@@ -16,13 +16,15 @@ authors = mag.getDataframe('Authors')
 # Get all Paper-Author-Affiliation relationships for papers published by the input organization
 orgAllPaperAuthorAffiliations = paperAuthorAffiliations \
     .join(orgPapers, paperAuthorAffiliations.PaperId == orgPapers.PaperId, 'inner') \
-    .select(orgPapers.PaperId, paperAuthorAffiliations.AuthorId, \
+    .select(orgPapers.PaperId, paperAuthorAffiliations.AuthorId,
             paperAuthorAffiliations.AffiliationId, paperAuthorAffiliations.AuthorSequenceNumber)
 
 # Get partner Paper-Author-Affiliation relationships by excluding those relationships of the input organization
-partnerPaperAuthorAffiliation = orgAllPaperAuthorAffiliations.subtract(orgPaperAuthorAffiliation)
+partnerPaperAuthorAffiliation = orgAllPaperAuthorAffiliations.subtract(
+    orgPaperAuthorAffiliation)
 partnerPaperAuthorAffiliation.show(10)
-asu.save(partnerPaperAuthorAffiliation, 'PartnerPaperAuthorAffiliationRelationship.csv')
+asu.save(partnerPaperAuthorAffiliation,
+         'PartnerPaperAuthorAffiliationRelationship.csv')
 
 # Get all partner affiliation Ids
 partnerAffiliationIds = partnerPaperAuthorAffiliation \
@@ -38,7 +40,8 @@ partnerAffiliations.show(10)
 asu.save(partnerAffiliations, 'PartnerAffiliation.csv')
 
 # Get all partner author Ids
-partnerAuthorIds = partnerPaperAuthorAffiliation.select(partnerPaperAuthorAffiliation.AuthorId).distinct()
+partnerAuthorIds = partnerPaperAuthorAffiliation.select(
+    partnerPaperAuthorAffiliation.AuthorId).distinct()
 partnerAuthors = authors.join(partnerAuthorIds, partnerAuthorIds.AuthorId == authors.AuthorId) \
                         .select(partnerAuthorIds.AuthorId, authors.DisplayName.alias('AuthorName'))
 partnerAuthors.show(10)

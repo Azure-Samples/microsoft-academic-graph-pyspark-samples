@@ -9,14 +9,15 @@ paperAuthorAffiliations.show(10)
 # Filter PaperAuthorAffiliations by AffiliationId
 orgPaperAuthorAffiliation = paperAuthorAffiliations \
     .join(affiliations, paperAuthorAffiliations.AffiliationId == affiliations.AffiliationId, 'inner') \
-    .select(paperAuthorAffiliations.PaperId, paperAuthorAffiliations.AuthorId, \
+    .select(paperAuthorAffiliations.PaperId, paperAuthorAffiliations.AuthorId,
             affiliations.AffiliationId, paperAuthorAffiliations.AuthorSequenceNumber)
 
 # Optional: peek result
 orgPaperAuthorAffiliation.show(10)
 
 # Optional: Count number of rows in result
-print('Number of rows in PaperAuthorAffiliation: {}'.format(orgPaperAuthorAffiliation.count()))
+print('Number of rows in PaperAuthorAffiliation: {}'.format(
+    orgPaperAuthorAffiliation.count()))
 
 # Output result
 asu.save(orgPaperAuthorAffiliation, 'PaperAuthorAffiliationRelationship.csv')
