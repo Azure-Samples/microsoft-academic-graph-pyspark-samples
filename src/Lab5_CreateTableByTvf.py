@@ -22,12 +22,12 @@ asu.save(orgPaperFieldOfStudy, 'PaperFieldOfStudyRelationship.csv')
 orgFieldOfStudyIds = orgPaperFieldOfStudy.select(orgPaperFieldOfStudy.FieldOfStudyId).distinct()
 
 # Get all field-of-study details for the input organization
-orgFiledOfStudy = fieldOfStudy \
+orgFieldOfStudy = fieldOfStudy \
     .join(orgFieldOfStudyIds, fieldOfStudy.FieldOfStudyId == orgFieldOfStudyIds.FieldOfStudyId, 'inner') \
     .select(orgFieldOfStudyIds.FieldOfStudyId, fieldOfStudy.Level.alias('FieldLevel'), fieldOfStudy.DisplayName.alias('FieldName'))
 
 # Optional: peek result
-orgFiledOfStudy.show(10)
+orgFieldOfStudy.show(10)
 
 # Output result
-asu.save(orgFiledOfStudy, 'FieldOfStudy.csv')
+asu.save(orgFieldOfStudy, 'FieldOfStudy.csv')
